@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:portfolio/app/app.bottomsheets.dart';
 import 'package:portfolio/app/app.dialogs.dart';
 import 'package:portfolio/app/app.locator.dart';
@@ -6,6 +7,9 @@ import 'package:stacked/stacked.dart';
 import 'package:stacked_services/stacked_services.dart';
 
 class HomeViewModel extends BaseViewModel {
+
+  final ScrollController scrollController = ScrollController();
+
   final _dialogService = locator<DialogService>();
   final _bottomSheetService = locator<BottomSheetService>();
 
@@ -33,4 +37,11 @@ class HomeViewModel extends BaseViewModel {
       description: ksHomeBottomSheetDescription,
     );
   }
+
+  @override
+  void dispose() {
+    scrollController.dispose(); // Dispose the controller
+    super.dispose();
+  }
+
 }
