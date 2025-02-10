@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:portfolio/ui/claude/dark_bg.dart';
 import 'package:portfolio/ui/claude/star_bg.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:visibility_detector/visibility_detector.dart';
+
 
 class PortfolioApp extends StatelessWidget {
   const PortfolioApp({super.key});
@@ -50,6 +52,7 @@ class HomePage extends StatelessWidget {
             child: Column(
               children: [
                 IntroSection(),
+                ExperienceSection(),
                 ProjectsSection(),
                 ContactSection(),
               ],
@@ -186,15 +189,48 @@ class IntroSection extends StatelessWidget {
               const SizedBox(height: 20),
               Container(
                 decoration: const BoxDecoration(
-                  color: Colors.white70,
+                  color: Colors.white60,
                   backgroundBlendMode: BlendMode.darken
                 ),
                 child: Text(
-                  "Hey I am Nikhil, Here I showcase things I've built and things I've been passionate about.",
+                  "I'm Nikhil",
                   textAlign: TextAlign.center,
-                  style: Theme.of(context).textTheme.headlineLarge?.copyWith(fontSize: 64, color: Colors.white70),
+                  style: Theme.of(context).textTheme.headlineLarge?.copyWith(fontSize: 48, color: Colors.white60),
                 ),
               ),
+              Container(
+                decoration: const BoxDecoration(
+                    color: Colors.white,
+                    backgroundBlendMode: BlendMode.darken
+                ),
+                child: Text(
+                  "Senior Software Developer",
+                  textAlign: TextAlign.center,
+                  style: Theme.of(context).textTheme.headlineLarge?.copyWith(fontSize: 32, color: Colors.white),
+                ),
+              ),
+              Container(
+                decoration: const BoxDecoration(
+                    color: Colors.white,
+                    backgroundBlendMode: BlendMode.darken
+                ),
+                child: Text(
+                  "Android | Backend | iOS",
+                  textAlign: TextAlign.center,
+                  style: Theme.of(context).textTheme.headlineLarge?.copyWith(fontSize: 28, color: Colors.white),
+                ),
+              ),
+              Container(
+                decoration: const BoxDecoration(
+                    color: Colors.white38,
+                    backgroundBlendMode: BlendMode.darken
+                ),
+                child: Text(
+                  "AI Enthusiast & Founder @NixacLabs",
+                  textAlign: TextAlign.center,
+                  style: Theme.of(context).textTheme.headlineLarge?.copyWith(fontSize: 24, color: Colors.white38),
+                ),
+              )
             ],
           ),
         )],
@@ -203,8 +239,8 @@ class IntroSection extends StatelessWidget {
   }
 }
 
-class ProjectsSection extends StatelessWidget {
-  const ProjectsSection({super.key});
+class ExperienceSection extends StatelessWidget {
+  const ExperienceSection({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -223,8 +259,9 @@ class ProjectsSection extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           const Text(
-            'Projects',
+            'Experience',
             style: TextStyle(
+              color: Colors.white10,
               fontSize: 64,
               fontWeight: FontWeight.bold,
             ),
@@ -238,23 +275,19 @@ class ProjectsSection extends StatelessWidget {
                   spacing: 20,
                   runSpacing: 20,
                   children: [
-                    ProjectCard(
-                      title: 'Project 1',
-                      description: 'Description for Project 1',
-                      imageUrl: 'https://via.placeholder.com/300',
+                    ProjectCardAnimated(
+                      title: 'Slice',
+                      description: 'Fintech Startup Unicorn\nBangalore, India\nSoftware Development Engineer - 3, Android ',
+                      imageUrl: 'assets/fintech_slice.jpg',
                       projectUrl: 'https://project1.com',
+                      years: "2020 Oct - 2024 March",
                     ),
-                    ProjectCard(
-                      title: 'Project 2',
-                      description: 'Description for Project 2',
-                      imageUrl: 'https://via.placeholder.com/300',
+                    ProjectCardAnimated(
+                      title: 'GreedyGame',
+                      description: 'Adtech Startup\nBangalore, India\nFullstack Developer, Android, iOS, Backend',
+                      imageUrl: 'assets/adtech_greedygame.png',
                       projectUrl: 'https://project2.com',
-                    ),
-                    ProjectCard(
-                      title: 'Project 3',
-                      description: 'Description for Project 3',
-                      imageUrl: 'https://via.placeholder.com/300',
-                      projectUrl: 'https://project3.com',
+                      years: "2015 Sep - 2019 Oct",
                     ),
                     // Add more ProjectCards as needed
                   ],
@@ -297,6 +330,125 @@ class ProjectsSection extends StatelessWidget {
     );
   }
 }
+
+class ProjectsSection extends StatelessWidget {
+  const ProjectsSection({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.width;
+
+    // Define a breakpoint for mobile screens (e.g., 600 pixels)
+    const mobileBreakpoint = 600.0;
+
+    // Calculate padding based on screen width
+    final horizontalPadding = screenWidth > mobileBreakpoint
+        ? screenWidth / 5 // 1/3rd of screen width for larger screens
+        : 20; // Fixed padding for mobile screens
+    return Container(
+      padding: EdgeInsets.symmetric(vertical: 30, horizontal: horizontalPadding.toDouble()),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.end,
+        children: [
+          Container(
+            decoration: const BoxDecoration(
+                color: Colors.white70,
+                backgroundBlendMode: BlendMode.darken
+            ),
+            child: Text(
+              "CREATE\niTERATE\niNNOVATE",
+              textAlign: TextAlign.center,
+              style: Theme.of(context).textTheme.headlineLarge?.copyWith(fontSize: 72, color: Colors.white70),
+            ),
+          ),
+          const Text(
+            'Projects',
+            textAlign: TextAlign.right,
+            style: TextStyle(
+              fontSize: 64,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          const SizedBox(height: 10),
+          const ProjectCardAnimated(
+            title: 'NixacLabs',
+            description: 'Apps for Utility & Entertainment',
+            imageUrl: 'assets/nixac_labs.png',
+            projectUrl: 'https://project3.com',
+            years: "2019 Oct - 2020 Oct",
+          ),
+          const SizedBox(height: 30),
+          LayoutBuilder(
+            builder: (context, constraints) {
+              if (constraints.maxWidth > 0) {
+                // Web layout
+                return const Wrap(
+                  spacing: 20,
+                  runSpacing: 20,
+                  children: [
+                    ProjectCardAnimated(
+                      title: 'FanFightClub',
+                      description: 'A code base which can generate multiple apps\nfrom a single code base',
+                      imageUrl: 'assets/fanfightclub.png',
+                      projectUrl: 'https://project1.com',
+                      years: "",
+                    ),
+                    ProjectCardAnimated(
+                      title: 'MMDB - MyMovieDatabase',
+                      description: 'An android app to rate, review and create movie playlists',
+                      imageUrl: 'assets/mmdb.jpg',
+                      projectUrl: 'https://project2.com',
+                      years: "",
+                    ),
+                    ProjectCardAnimated(
+                      title: 'AIngel',
+                      description: 'LLM based relationship building app.\nThat mutual friend we all wished for.\nCurrently part of Conestoga Venture Tech Lab - CEC Collective',
+                      imageUrl: 'assets/aingel.jpg',
+                      projectUrl: 'https://project3.com',
+                      years: "2024 Oct - Present",
+                    ),
+                    // Add more ProjectCards as needed
+                  ],
+                );
+              } else {
+                // Mobile layout
+                return const SingleChildScrollView(
+                  scrollDirection: Axis.horizontal,
+                  child: Row(
+                    children: [
+                      ProjectCard(
+                        title: 'Project 1',
+                        description: 'Description for Project 1',
+                        imageUrl: 'https://via.placeholder.com/300',
+                        projectUrl: 'https://project1.com',
+                      ),
+                      SizedBox(width: 20),
+                      ProjectCard(
+                        title: 'Project 2',
+                        description: 'Description for Project 2',
+                        imageUrl: 'https://via.placeholder.com/300',
+                        projectUrl: 'https://project2.com',
+                      ),
+                      SizedBox(width: 20),
+                      ProjectCard(
+                        title: 'Project 3',
+                        description: 'Description for Project 3',
+                        imageUrl: 'https://via.placeholder.com/300',
+                        projectUrl: 'https://project3.com',
+                      ),
+                      // Add more ProjectCards as needed
+                    ],
+                  ),
+                );
+              }
+            },
+          ),
+        ],
+      ),
+    );
+  }
+}
+
 
 class ProjectCard extends StatefulWidget {
   final String title;
@@ -380,6 +532,8 @@ class _CustomProjectCardState extends State<ProjectCard> {
     );
   }
 }
+
+
 
 class ContactSection extends StatelessWidget {
   const ContactSection({super.key});
@@ -470,3 +624,181 @@ class SocialLink extends StatelessWidget {
     );
   }
 }
+
+
+class ProjectCardAnimated extends StatefulWidget {
+  final String title;
+  final String description;
+  final String imageUrl;
+  final String projectUrl;
+  final String years;
+
+  const ProjectCardAnimated({
+    super.key,
+    required this.title,
+    required this.description,
+    required this.imageUrl,
+    required this.projectUrl,
+    required this.years
+  });
+
+  @override
+  State<ProjectCardAnimated> createState() => _ProjectCardAnimatedState();
+}
+
+class _ProjectCardAnimatedState extends State<ProjectCardAnimated> with SingleTickerProviderStateMixin {
+  late AnimationController _controller;
+  late Animation<Offset> _slideAnimation;
+  late Animation<Offset> _slideAnimationToTop;
+  late Animation<double> _fadeAnimation;
+  bool isVisible = false;
+
+  @override
+  void initState() {
+    super.initState();
+
+    _controller = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 800),
+    );
+
+    _slideAnimation = Tween<Offset>(
+      begin: const Offset(-1.5, 0), // Start off-screen left
+      end: Offset.zero,
+    ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeOut));
+
+    _slideAnimationToTop = Tween<Offset>(
+      begin: const Offset(0, 5), // Start off-screen left
+      end: Offset.zero,
+    ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeOut));
+
+    _fadeAnimation = Tween<double>(
+      begin: 0.0,
+      end: 1.0,
+    ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeIn));
+  }
+
+  void _onVisibilityChanged(VisibilityInfo info) {
+    if (info.visibleFraction > 0.2 && !isVisible) {
+      isVisible = true;
+      _controller.forward(); // Animate in
+    } else if (info.visibleFraction == 0) {
+      isVisible = false;
+      _controller.reset(); // Reset animation when out of view
+    }
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+  bool isHovered = false;
+
+  @override
+  Widget build(BuildContext context) {
+    return MouseRegion(
+      onEnter: (_) => setState(() => isHovered = true),
+      onExit: (_) => setState(() => isHovered = false),
+      child: VisibilityDetector(
+        key: Key(widget.title),
+        onVisibilityChanged: _onVisibilityChanged,
+        child: InkWell(
+          onTap: () => launchUrl(Uri.parse(widget.projectUrl)),
+          child: Stack(
+            children: [
+              Image.asset(
+                widget.imageUrl,
+                height: 250,
+                width: double.infinity,
+                fit: BoxFit.cover,
+              ),
+              Positioned.fill(
+                child: Container(
+                  decoration: const BoxDecoration(
+                    gradient: LinearGradient(
+                      colors: [Colors.black, Colors.black54, Colors.black],
+                      begin: Alignment.centerLeft,
+                      end: Alignment.centerRight,
+                    ),
+                  ),
+                ),
+              ),
+              Positioned.fill(
+                child: Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.end,
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                      SlideTransition(
+                        position: _slideAnimationToTop,
+                        child: FadeTransition(
+                          opacity: _fadeAnimation,
+                          child: Text(
+                            widget.years,
+                            textAlign: TextAlign.right,
+                            style: const TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.normal,
+                              color: Colors.white,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              Positioned.fill(
+                child: Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      SlideTransition(
+                        position: _slideAnimation,
+                        child: FadeTransition(
+                          opacity: _fadeAnimation,
+                          child: Text(
+                            widget.title,
+                            textAlign: TextAlign.center,
+                            style: const TextStyle(
+                              fontSize: 32,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.white,
+                            ),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 8),
+                      SlideTransition(
+                        position: Tween<Offset>(
+                          begin: const Offset(1.5, 0), // Start off-screen right
+                          end: Offset.zero,
+                        ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeOut)),
+                        child: FadeTransition(
+                          opacity: _fadeAnimation,
+                          child: Text(
+                            widget.description,
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                              fontSize: 20,
+                              color: isHovered ? Colors.white : Colors.white38,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
