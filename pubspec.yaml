@@ -27,14 +27,17 @@ flutter:
   uses-material-design: true
   assets:
     - assets/bg_main.png
-    - assets/fintech_slice.jpg
-    - assets/messivsronaldo.jpg
+    - assets/fintech_slice.png
     - assets/adtech_greedygame.png
     - assets/mmdb.png
-    - assets/mmdb.jpg
     - assets/fanfightclub.png
-    - assets/aingel.jpg
     - assets/nixac_labs.png
+    - assets/icon_linkedin.png
+    - assets/icon_github.png
+    - assets/icon_bitbucket.png
+    - assets/who_looks_like_me.png
+    - assets/should_i_watch_it.png
+    - assets/url_shortener.png
   fonts:
     - family: Ubuntu
       fonts:
@@ -44,6 +47,3 @@ flutter:
     - family: TitleFont
       fonts:
         - asset: assets/fonts/Milker.otf
-    - family: Jockey
-      fonts:
-        - asset: assets/fonts/JockeyOne-Regular.ttf

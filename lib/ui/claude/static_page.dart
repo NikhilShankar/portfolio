@@ -1,9 +1,14 @@
 // main.dart
 import 'package:flutter/material.dart';
+import 'package:portfolio/ui/claude/content.dart';
 import 'package:portfolio/ui/claude/dark_bg.dart';
+import 'package:portfolio/ui/claude/project_animated_card_expandable.dart';
 import 'package:portfolio/ui/claude/star_bg.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:visibility_detector/visibility_detector.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart' show kIsWeb; // Detect web environment
+
 
 
 class PortfolioApp extends StatelessWidget {
@@ -31,13 +36,32 @@ class PortfolioApp extends StatelessWidget {
         ),
         fontFamily: 'TitleFont',
       ),
-      home: const HomePage(),
+      home: HomePage(),
     );
   }
 }
 
 class HomePage extends StatelessWidget {
-  const HomePage({super.key});
+
+  final ScrollController _scrollController = ScrollController();
+
+  // Global keys for identifying sections
+  final GlobalKey experienceKey = GlobalKey();
+  final GlobalKey appsKey = GlobalKey();
+  final GlobalKey aimlKey = GlobalKey();
+
+  HomePage({super.key});
+
+  void _scrollToSection(GlobalKey sectionKey) {
+    final context = sectionKey.currentContext;
+    if (context != null) {
+      Scrollable.ensureVisible(
+        context,
+        duration: const Duration(milliseconds: 600),
+        curve: Curves.easeInOut,
+      );
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -46,18 +70,19 @@ class HomePage extends StatelessWidget {
         decoration: const BoxDecoration(
           gradient: RadialGradient(colors: [Colors.black, Colors.black])
         ),
-        child: const Stack(
+        child: Stack(
           children: [
             SingleChildScrollView(
             child: Column(
               children: [
                 IntroSection(),
-                ExperienceSection(),
-                ProjectsSection(),
-                ContactSection(),
+                ExperienceSection(key: experienceKey),
+                ProjectsSection(key: appsKey),
+                ProjectsSection2(key: aimlKey)
               ],
             ),
-          ), CustomAppBar(),],
+          ), CustomAppBar(scrollToSection: _scrollToSection,experienceKey: experienceKey,
+            appsKey: appsKey, aimlKey: aimlKey),Container(alignment: Alignment.bottomLeft, child:const ExpandableSocialLinks())],
         ),
       ),
     );
@@ -65,10 +90,23 @@ class HomePage extends StatelessWidget {
 }
 
 class CustomAppBar extends StatefulWidget {
-  const CustomAppBar({super.key});
+
+  final Function(GlobalKey) scrollToSection;  // ✅ Accept scroll function
+  final GlobalKey experienceKey;
+  final GlobalKey appsKey;
+  final GlobalKey aimlKey;
+
+  const CustomAppBar({
+    super.key,
+    required this.scrollToSection,
+    required this.experienceKey,
+    required this.appsKey,
+    required this.aimlKey,
+  });
 
   @override
   State<CustomAppBar> createState() => _CustomAppBarState();
+  
 }
 
 class _CustomAppBarState extends State<CustomAppBar> {
@@ -102,9 +140,15 @@ class _CustomAppBarState extends State<CustomAppBar> {
           ),
           Row(
             children: [
-              NavBarItem(title: 'Projects', onTap: () {}),
-              NavBarItem(title: 'Contact', onTap: () {}),
-              NavBarItem(title: 'Repos', onTap: () {}),
+              NavBarItem(title: 'Experience', onTap: () {
+                widget.scrollToSection(widget.experienceKey);
+              }),
+              NavBarItem(title: 'Apps', onTap: () {
+                widget.scrollToSection(widget.appsKey);
+              }),
+              NavBarItem(title: 'AI/ML', onTap: () {
+                widget.scrollToSection(widget.aimlKey);
+              }),
             ],
           ),
         ],
@@ -240,7 +284,8 @@ class IntroSection extends StatelessWidget {
 }
 
 class ExperienceSection extends StatelessWidget {
-  const ExperienceSection({super.key});
+
+  const ExperienceSection({Key? key}): super(key:key);
 
   @override
   Widget build(BuildContext context) {
@@ -269,60 +314,32 @@ class ExperienceSection extends StatelessWidget {
           const SizedBox(height: 20),
           LayoutBuilder(
             builder: (context, constraints) {
-              if (constraints.maxWidth > 0) {
                 // Web layout
                 return const Wrap(
                   spacing: 20,
                   runSpacing: 20,
                   children: [
-                    ProjectCardAnimated(
+                    ProjectCardExpandable(
                       title: 'Slice',
                       description: 'Fintech Startup Unicorn\nBangalore, India\nSoftware Development Engineer - 3, Android ',
-                      imageUrl: 'assets/fintech_slice.jpg',
-                      projectUrl: 'https://project1.com',
+                      imageUrl: 'assets/fintech_slice.png',
+                      projectUrl: 'https://www.sliceit.com/',
                       years: "2020 Oct - 2024 March",
+                      subtitle: sliceDetails,
+                      ctaText: "Visit Website",
                     ),
-                    ProjectCardAnimated(
+                    ProjectCardExpandable(
                       title: 'GreedyGame',
                       description: 'Adtech Startup\nBangalore, India\nFullstack Developer, Android, iOS, Backend',
                       imageUrl: 'assets/adtech_greedygame.png',
-                      projectUrl: 'https://project2.com',
+                      projectUrl: 'https://greedygame.com/',
                       years: "2015 Sep - 2019 Oct",
+                      subtitle: greedyGameDetails,
+                      ctaText: "Visit Website",
                     ),
                     // Add more ProjectCards as needed
                   ],
                 );
-              } else {
-                // Mobile layout
-                return const SingleChildScrollView(
-                  scrollDirection: Axis.horizontal,
-                  child: Row(
-                    children: [
-                      ProjectCard(
-                        title: 'Project 1',
-                        description: 'Description for Project 1',
-                        imageUrl: 'https://via.placeholder.com/300',
-                        projectUrl: 'https://project1.com',
-                      ),
-                      SizedBox(width: 20),
-                      ProjectCard(
-                        title: 'Project 2',
-                        description: 'Description for Project 2',
-                        imageUrl: 'https://via.placeholder.com/300',
-                        projectUrl: 'https://project2.com',
-                      ),
-                      SizedBox(width: 20),
-                      ProjectCard(
-                        title: 'Project 3',
-                        description: 'Description for Project 3',
-                        imageUrl: 'https://via.placeholder.com/300',
-                        projectUrl: 'https://project3.com',
-                      ),
-                      // Add more ProjectCards as needed
-                    ],
-                  ),
-                );
-              }
             },
           ),
         ],
@@ -332,7 +349,8 @@ class ExperienceSection extends StatelessWidget {
 }
 
 class ProjectsSection extends StatelessWidget {
-  const ProjectsSection({super.key});
+  
+  const ProjectsSection({Key? key}): super(key:key);
 
   @override
   Widget build(BuildContext context) {
@@ -370,12 +388,102 @@ class ProjectsSection extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 10),
-          const ProjectCardAnimated(
+          const ProjectCardExpandable(
             title: 'NixacLabs',
             description: 'Apps for Utility & Entertainment',
             imageUrl: 'assets/nixac_labs.png',
             projectUrl: 'https://project3.com',
-            years: "2019 Oct - 2020 Oct",
+            years: "2019 Oct - Present",
+            subtitle: nixacLabsDetails,
+          ),
+          const SizedBox(height: 30),
+          LayoutBuilder(
+            builder: (context, constraints) {
+                // Web layout
+                return const Wrap(
+                  spacing: 20,
+                  runSpacing: 20,
+                  children: [
+                    ProjectCardAnimated(
+                      title: 'FanFightClub',
+                      description: 'A code base which can generate multiple apps\nfrom a single code base',
+                      imageUrl: 'assets/fanfightclub.png',
+                      projectUrl: 'https://bitbucket.org/nixacfilms/fanfightclub-android/src/master/',
+                      years: "2019 Aug - 2024 Aug",
+                    ),
+                    ProjectCardAnimated(
+                      title: 'MMDB - MyMovieDatabase',
+                      description: 'An android app to rate, review and create movie playlists',
+                      imageUrl: 'assets/mmdb.png',
+                      projectUrl: 'https://bitbucket.org/nixacfilms/moviebuf/src/master/',
+                      years: "",
+                    ),
+                    ProjectCardAnimated(
+                      title: 'URL Manager',
+                      description: 'An android app to create shortened URLs and maintain them.',
+                      imageUrl: 'assets/url_shortener.png',
+                      projectUrl: 'https://bitbucket.org/nixacfilms/url_manager/src/master/',
+                      years: "",
+                    ),
+                    // Add more ProjectCards as needed
+                  ],
+                );
+              }
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class ProjectsSection2 extends StatelessWidget {
+  
+  const ProjectsSection2({Key? key}): super(key:key);
+
+  @override
+  Widget build(BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.width;
+
+    // Define a breakpoint for mobile screens (e.g., 600 pixels)
+    const mobileBreakpoint = 600.0;
+
+    // Calculate padding based on screen width
+    final horizontalPadding = screenWidth > mobileBreakpoint
+        ? screenWidth / 5 // 1/3rd of screen width for larger screens
+        : 20; // Fixed padding for mobile screens
+    return Container(
+      padding: EdgeInsets.symmetric(vertical: 30, horizontal: horizontalPadding.toDouble()),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Container(
+            decoration: const BoxDecoration(
+                color: Colors.white70,
+                backgroundBlendMode: BlendMode.darken
+            ),
+            child: Text(
+              "TRAIN\niNFER\nOPTIMIZE",
+              textAlign: TextAlign.left,
+              style: Theme.of(context).textTheme.headlineLarge?.copyWith(fontSize: 72, color: Colors.white38),
+            ),
+          ),
+          const Text(
+            'AI & ML',
+            textAlign: TextAlign.right,
+            style: TextStyle(
+              fontSize: 64,
+              fontWeight: FontWeight.bold,
+              color: Colors.white70
+            ),
+          ),
+          const SizedBox(height: 10),
+          const ProjectCardExpandable(
+            title: 'Who Looks Like Me ?',
+            description: 'Celebrity face similarity predictor.',
+            imageUrl: 'assets/who_looks_like_me.png',
+            projectUrl: 'http://nikhilshankar.com:8501/',
+            years: "2024 Dec - Current",
+            subtitle: "* Created \n \n \n How is it ?", ctaText: "Visit Website",
           ),
           const SizedBox(height: 30),
           LayoutBuilder(
@@ -387,19 +495,13 @@ class ProjectsSection extends StatelessWidget {
                   runSpacing: 20,
                   children: [
                     ProjectCardAnimated(
-                      title: 'FanFightClub',
-                      description: 'A code base which can generate multiple apps\nfrom a single code base',
-                      imageUrl: 'assets/fanfightclub.png',
-                      projectUrl: 'https://project1.com',
-                      years: "",
+                      title: 'Should I Watch It ?',
+                      description: 'Youtube movie trailer sentiment analyser',
+                      imageUrl: 'assets/should_i_watch_it.png',
+                      projectUrl: 'https://github.com/NikhilShankar/ShouldIWatchIt',
+                      years: "2024 Dec - Current",
                     ),
-                    ProjectCardAnimated(
-                      title: 'MMDB - MyMovieDatabase',
-                      description: 'An android app to rate, review and create movie playlists',
-                      imageUrl: 'assets/mmdb.jpg',
-                      projectUrl: 'https://project2.com',
-                      years: "",
-                    ),
+                    // Add more ProjectCards as needed
                     ProjectCardAnimated(
                       title: 'AIngel',
                       description: 'LLM based relationship building app.\nThat mutual friend we all wished for.\nCurrently part of Conestoga Venture Tech Lab - CEC Collective',
@@ -407,7 +509,6 @@ class ProjectsSection extends StatelessWidget {
                       projectUrl: 'https://project3.com',
                       years: "2024 Oct - Present",
                     ),
-                    // Add more ProjectCards as needed
                   ],
                 );
               } else {
@@ -448,7 +549,6 @@ class ProjectsSection extends StatelessWidget {
     );
   }
 }
-
 
 class ProjectCard extends StatefulWidget {
   final String title;
@@ -532,99 +632,6 @@ class _CustomProjectCardState extends State<ProjectCard> {
     );
   }
 }
-
-
-
-class ContactSection extends StatelessWidget {
-  const ContactSection({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.symmetric(vertical: 50, horizontal: 20),
-      child: Column(
-        children: [
-          const Text(
-            'Contact',
-            style: TextStyle(
-              fontSize: 28,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-          const SizedBox(height: 20),
-          Wrap(
-            spacing: 20,
-            runSpacing: 20,
-            alignment: WrapAlignment.center,
-            children: [
-              SocialLink(
-                platform: 'LinkedIn',
-                url: 'https://www.linkedin.com/in/nikhilshankarcs/',
-                icon: Icons.link,
-              ),
-              SocialLink(
-                platform: 'GitHub',
-                url: 'https://github.com/yourusername',
-                icon: Icons.code,
-              ),
-              SocialLink(
-                platform: 'BitBucket',
-                url: 'https://bitbucket.org/yourusername',
-                icon: Icons.source,
-              ),
-              SocialLink(
-                platform: 'Play Store',
-                url: 'https://play.google.com/store/apps/developer?id=yourid',
-                icon: Icons.android,
-              ),
-              SocialLink(
-                platform: 'Website',
-                url: 'https://yourwebsite.com',
-                icon: Icons.language,
-              ),
-            ],
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class SocialLink extends StatelessWidget {
-  final String platform;
-  final String url;
-  final IconData icon;
-
-  const SocialLink({
-    super.key,
-    required this.platform,
-    required this.url,
-    required this.icon,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return InkWell(
-      onTap: () => launchUrl(Uri.parse(url)),
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-        decoration: BoxDecoration(
-          border: Border.all(color: Colors.grey),
-          borderRadius: BorderRadius.circular(30),
-        ),
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Icon(icon),
-            const SizedBox(width: 8),
-            Text(platform),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
 
 class ProjectCardAnimated extends StatefulWidget {
   final String title;
@@ -801,4 +808,121 @@ class _ProjectCardAnimatedState extends State<ProjectCardAnimated> with SingleTi
     );
   }
 }
+
+
+
+class ExpandableSocialLinks extends StatefulWidget {
+  const ExpandableSocialLinks({super.key});
+
+  @override
+  ExpandableSocialLinksState createState() => ExpandableSocialLinksState();
+}
+
+class ExpandableSocialLinksState extends State<ExpandableSocialLinks> with SingleTickerProviderStateMixin {
+  bool isExpanded = false;
+  late AnimationController _controller;
+  late Animation<double> _animation;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(
+      vsync: this,
+      duration: Duration(milliseconds: 300),
+    );
+    _animation = CurvedAnimation(parent: _controller, curve: Curves.easeInOut);
+  }
+
+  void _toggleExpand(bool expand) {
+    setState(() {
+      isExpanded = expand;
+      if (expand) {
+        _controller.forward();
+      } else {
+        _controller.reverse();
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.all(20),
+      child: MouseRegion(
+        onEnter: (_) => kIsWeb ? _toggleExpand(true) : null,  // Expand on hover (Web)
+        onExit: (_) => kIsWeb ? _toggleExpand(false) : null,  // Collapse on hover out (Web)
+        child: GestureDetector(
+          onTap: () => _toggleExpand(!isExpanded),  // Expand on tap (Mobile)
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              IntrinsicWidth(
+                child: SizeTransition(
+                  sizeFactor: _animation,
+                  axisAlignment: -1.0, // Expands upwards
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      _buildIconButton("assets/icon_linkedin.png", "LinkedIn"),
+                      _buildIconButton("assets/icon_github.png", "GitHub"),
+                      _buildIconButton("assets/icon_bitbucket.png", "Bitbucket"),
+                    ],
+                  ),
+                ),
+              ),
+              SizedBox(
+                width: 28,
+                height: 28,
+                child: FloatingActionButton(
+                  onPressed: () => _toggleExpand(!isExpanded),
+                  backgroundColor: Colors.grey,
+                  shape: const CircleBorder(),
+                  mini: true,
+                  child: const Icon(Icons.link, color: Colors.black),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildIconButton(String icon, String tooltip) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 4.0),
+      child: SizedBox(
+        width: 28,
+        height: 28,
+        child: FloatingActionButton(
+          heroTag: tooltip,  // Avoid hero animation conflicts
+          onPressed: () => print("$tooltip clicked"),
+          backgroundColor: Colors.grey,
+          mini: true,
+          tooltip: tooltip,
+          shape: const CircleBorder(),
+          child: Container(
+            width: double.infinity, // 100% width
+            height: double.infinity, // 75% of the available height
+            decoration: BoxDecoration(
+              image: DecorationImage(
+                image: AssetImage(icon),
+                fit: BoxFit.contain,
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
 
