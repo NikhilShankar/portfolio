@@ -27,6 +27,7 @@ flutter:
   uses-material-design: true
   assets:
     - assets/bg_main.png
+    - assets/aingel.png
     - assets/fintech_slice.png
     - assets/adtech_greedygame.png
     - assets/mmdb.png
@@ -38,6 +39,7 @@ flutter:
     - assets/who_looks_like_me.png
     - assets/should_i_watch_it.png
     - assets/url_shortener.png
+    - assets/leetcode.png
   fonts:
     - family: Ubuntu
       fonts:

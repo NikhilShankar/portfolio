@@ -241,7 +241,7 @@ class _ProjectCardExpandable extends State<ProjectCardExpandable> with TickerPro
                                       ),
                                     ),
                                     const SizedBox(height: 16),
-                                    Center(
+                                    widget.ctaText != "" ? Center(
                                       child: MouseRegion(
                                         cursor: SystemMouseCursors.click,
                                         child: GestureDetector(
@@ -267,7 +267,7 @@ class _ProjectCardExpandable extends State<ProjectCardExpandable> with TickerPro
                                           ),
                                         ),
                                       ),
-                                    ),
+                                    ): Spacer(),
                                   ],
                                 ),
                               ),

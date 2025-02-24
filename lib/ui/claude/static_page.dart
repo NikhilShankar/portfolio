@@ -395,6 +395,7 @@ class ProjectsSection extends StatelessWidget {
             projectUrl: 'https://project3.com',
             years: "2019 Oct - Present",
             subtitle: nixacLabsDetails,
+            ctaText: "",
           ),
           const SizedBox(height: 30),
           LayoutBuilder(
@@ -483,7 +484,7 @@ class ProjectsSection2 extends StatelessWidget {
             imageUrl: 'assets/who_looks_like_me.png',
             projectUrl: 'http://nikhilshankar.com:8501/',
             years: "2024 Dec - Current",
-            subtitle: "* Created \n \n \n How is it ?", ctaText: "Visit Website",
+            subtitle: whoLooksLikeMeDetails, ctaText: "Visit Website",
           ),
           const SizedBox(height: 30),
           LayoutBuilder(
@@ -505,8 +506,8 @@ class ProjectsSection2 extends StatelessWidget {
                     ProjectCardAnimated(
                       title: 'AIngel',
                       description: 'LLM based relationship building app.\nThat mutual friend we all wished for.\nCurrently part of Conestoga Venture Tech Lab - CEC Collective',
-                      imageUrl: 'assets/aingel.jpg',
-                      projectUrl: 'https://project3.com',
+                      imageUrl: 'assets/aingel.png',
+                      projectUrl: '',
                       years: "2024 Oct - Present",
                     ),
                   ],
@@ -711,7 +712,7 @@ class _ProjectCardAnimatedState extends State<ProjectCardAnimated> with SingleTi
         key: Key(widget.title),
         onVisibilityChanged: _onVisibilityChanged,
         child: InkWell(
-          onTap: () => launchUrl(Uri.parse(widget.projectUrl)),
+          onTap: () => (widget.projectUrl != "") ? launchUrl(Uri.parse(widget.projectUrl)) : "",
           child: Stack(
             children: [
               Image.asset(
@@ -871,9 +872,10 @@ class ExpandableSocialLinksState extends State<ExpandableSocialLinks> with Singl
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      _buildIconButton("assets/icon_linkedin.png", "LinkedIn"),
-                      _buildIconButton("assets/icon_github.png", "GitHub"),
-                      _buildIconButton("assets/icon_bitbucket.png", "Bitbucket"),
+                      _buildIconButton("assets/icon_linkedin.png", "LinkedIn", "https://www.linkedin.com/in/nikhilshankarcs/"),
+                      _buildIconButton("assets/icon_github.png", "GitHub", "https://github.com/NikhilShankar"),
+                      _buildIconButton("assets/icon_bitbucket.png", "Bitbucket", "https://bitbucket.org/nixacfilms"),
+                      _buildIconButton("assets/leetcode.png", "LeetCode", "https://leetcode.com/u/user2137S/"),
                     ],
                   ),
                 ),
@@ -896,7 +898,7 @@ class ExpandableSocialLinksState extends State<ExpandableSocialLinks> with Singl
     );
   }
 
-  Widget _buildIconButton(String icon, String tooltip) {
+  Widget _buildIconButton(String icon, String tooltip, String link) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 4.0),
       child: SizedBox(
@@ -904,7 +906,7 @@ class ExpandableSocialLinksState extends State<ExpandableSocialLinks> with Singl
         height: 28,
         child: FloatingActionButton(
           heroTag: tooltip,  // Avoid hero animation conflicts
-          onPressed: () => print("$tooltip clicked"),
+          onPressed: () => launchUrl(Uri.parse(link)),
           backgroundColor: Colors.grey,
           mini: true,
           tooltip: tooltip,
